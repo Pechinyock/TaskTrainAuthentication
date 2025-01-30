@@ -1,5 +1,6 @@
 using TT.Core;
-using TT.Auth;
+
+namespace TT.Auth;
 
 internal static class EntryPoint
 {
