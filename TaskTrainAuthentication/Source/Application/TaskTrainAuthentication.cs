@@ -7,7 +7,9 @@ public class TaskTrainAuthentication : ITTApp
     #region Startup initializer
     private class Initialize
     {
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
+
+        private readonly string _postgreConnectionString;
 
         public Initialize(IHostEnvironment env)
         {
@@ -15,6 +17,8 @@ public class TaskTrainAuthentication : ITTApp
                 .AddJsonFile("Config/appsettings.json", false, true)
                 .AddJsonFile($"Config/appsettings.{env.EnvironmentName}.json")
                 .Build();
+
+            _postgreConnectionString = Configuration["Storage:PostgreSQL:Connectionstring"];
         }
 
         public void ConfigureServices(IServiceCollection services) 
@@ -23,6 +27,7 @@ public class TaskTrainAuthentication : ITTApp
             services.AddTokenGenerator();
             services.AddControllers();
             services.AddSwaggerGenAuth();
+            services.AddDatabaseMetaInfoService(_postgreConnectionString);
         }
 
         public void Configure(IApplicationBuilder builder, IWebHostEnvironment env) 

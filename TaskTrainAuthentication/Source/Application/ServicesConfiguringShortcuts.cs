@@ -58,4 +58,18 @@ public static class ServicesConfiguringShortcuts
         services.AddSingleton<ITokenService, TokenService>();
         return services;
     }
+
+    public static IServiceCollection AddDatabaseMetaInfoService(this IServiceCollection services, string connectionString) 
+    {
+        if(String.IsNullOrEmpty(connectionString))
+            throw new ArgumentNullException(nameof(connectionString));
+
+        services.AddScoped<IDatabaseMetaInfoService, DatabaseMetaInfoService>();
+        services.Configure<DatabaseMetaInfoOptions>(options => 
+        {
+            options.ConnectionString = connectionString;
+        });
+
+        return services;
+    }
 }
