@@ -19,13 +19,19 @@ public class TaskTrainAuthentication : ITTApp
 
         public void ConfigureServices(IServiceCollection services) 
         {
+            services.AddJwtAuth();
+            services.AddTokenGenerator();
             services.AddControllers();
-            services.AddSwaggerGen();
+            services.AddSwaggerGenAuth();
         }
 
         public void Configure(IApplicationBuilder builder, IWebHostEnvironment env) 
         {
             builder.UseRouting();
+
+            builder.UseAuthentication();
+            builder.UseAuthorization();
+
             builder.UseEndpoints(endpoints => 
             {
                 endpoints.MapControllers();
@@ -47,7 +53,6 @@ public class TaskTrainAuthentication : ITTApp
                 .UseKestrel()
                 .UseUrls("http://*:5000");
         });
-
         _app = builder.Build();
     }
 
