@@ -22,6 +22,6 @@ public class StorageInfoController : ControllerBase
     [HttpGet]
     public string GetCurrentDatabaseName() 
     {
-        return _databaseMetaInfoService.GetCurrentDatabaseName();
+        return _databaseMetaInfoService.GetDefaultDatabaseName();
     }
 }

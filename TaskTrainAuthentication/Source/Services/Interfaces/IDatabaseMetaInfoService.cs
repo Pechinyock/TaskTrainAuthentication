@@ -3,5 +3,5 @@
 public interface IDatabaseMetaInfoService
 {
     public string GetDatabaseVendorName();
-    public string GetCurrentDatabaseName();
+    public string GetDefaultDatabaseName();
 }

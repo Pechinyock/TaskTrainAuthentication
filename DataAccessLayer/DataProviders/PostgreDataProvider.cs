@@ -15,7 +15,7 @@ public class PostgreDataProvider : IStorageProvider
         _connectionString = connectionString;
     }
 
-    public string GetCurrentDatabaseName()
+    public string GetDefautDatabaseName()
     {
         var result = String.Empty;
         using (var connetion = new NpgsqlConnection(_connectionString))
@@ -26,7 +26,7 @@ public class PostgreDataProvider : IStorageProvider
                 cmd.Connection = connetion;
                 cmd.CommandText = $"select current_database() as result;";
                 var reader = cmd.ExecuteReader();
-                while (reader.Read()) 
+                while (reader.Read())
                 {
                     result = (string)reader["result"];
                 }

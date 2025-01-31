@@ -14,8 +14,6 @@ public class DatabaseMetaInfoOptions
 public class DatabaseMetaInfoService : IDatabaseMetaInfoService
 {
     private readonly IStorageProvider _storageProvider;
-    /* [TODO] delete it and create method in IStorageProviders */
-    private readonly PostgreDataProvider _postgreProvider;
 
     public DatabaseMetaInfoService(IOptions<DatabaseMetaInfoOptions> options)
     {
@@ -24,11 +22,10 @@ public class DatabaseMetaInfoService : IDatabaseMetaInfoService
         if (options.Value == null)
             throw new ArgumentNullException(nameof(options.Value));
 
-        _postgreProvider = new PostgreDataProvider(options.Value.ConnectionString);
-        _storageProvider = _postgreProvider;
+        _storageProvider = new PostgreDataProvider(options.Value.ConnectionString);
     }
 
-    public string GetCurrentDatabaseName() => _postgreProvider.GetCurrentDatabaseName();
+    public string GetDefaultDatabaseName() => _storageProvider.GetDefautDatabaseName();
 
     public string GetDatabaseVendorName() => _storageProvider.GetDatabaseVendorName();
 }
