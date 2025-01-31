@@ -1,11 +1,13 @@
 ﻿using Npgsql;
-using TT.Core;
+using TT.Auth.DatabaseUpdaters;
+using TT.Stroage;
 
 namespace TT.Auth.DataProviders;
 
-public class PostgreDataProvider : IStorageProvider
+public class PostgreDataProvider : ISQLDataProvider
 {
     private readonly string _connectionString;
+    private readonly ISQLDatabaseUpdater _databaseUpdater;
 
     public PostgreDataProvider(string connectionString)
     {
@@ -13,6 +15,7 @@ public class PostgreDataProvider : IStorageProvider
             throw new ArgumentNullException(nameof(connectionString));
 
         _connectionString = connectionString;
+        _databaseUpdater = new PostgreSQLDatabaseUpdater(connectionString);
     }
 
     public string GetDefautDatabaseName()
@@ -37,5 +40,4 @@ public class PostgreDataProvider : IStorageProvider
 
     public string GetDatabaseVendorName() => "Postgres";
 
-    public StroageTypeFlags GetStorageType() => StroageTypeFlags.Remote | StroageTypeFlags.SqlDatabase;
 }
