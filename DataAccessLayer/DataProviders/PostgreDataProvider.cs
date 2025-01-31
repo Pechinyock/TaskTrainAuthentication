@@ -37,5 +37,5 @@ public class PostgreDataProvider : IStorageProvider
 
     public string GetDatabaseVendorName() => "Postgres";
 
-    StroageTypeFlags IStorageProvider.GetType() => StroageTypeFlags.Remote | StroageTypeFlags.SqlDatabase;
+    public StroageTypeFlags GetStorageType() => StroageTypeFlags.Remote | StroageTypeFlags.SqlDatabase;
 }
