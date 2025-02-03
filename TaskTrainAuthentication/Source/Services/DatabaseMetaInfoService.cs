@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using TT.Auth.DataProviders;
-using TT.Stroage;
+using TT.Storage;
 
 namespace TT.Auth;
 

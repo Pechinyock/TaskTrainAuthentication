@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using TT.Auth.DatabaseUpdaters;
-using TT.Stroage;
+using TT.Storage;
 
 namespace DataAccessLayerTests;
 
