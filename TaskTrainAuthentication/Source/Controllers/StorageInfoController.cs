@@ -4,24 +4,60 @@ namespace TT.Auth;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public class StorageInfoController : ControllerBase
+public class ServiceUpdateController : ControllerBase
 {
-    private readonly IDatabaseMetaInfoService _databaseMetaInfoService;
+    private readonly IUpdateService _updateService;
 
-    public StorageInfoController(IDatabaseMetaInfoService databaseMetaInfoService)
+    public ServiceUpdateController(IUpdateService databaseMetaInfoService)
     {
-        _databaseMetaInfoService = databaseMetaInfoService;
+        _updateService = databaseMetaInfoService;
     }
 
     [HttpGet]
-    public string GetStorageVendorName() 
+    public void InitializeDatabase()
     {
-        return _databaseMetaInfoService.GetDatabaseVendorName();
+        _updateService.DatabaseInitialize();
     }
 
     [HttpGet]
-    public string GetCurrentDatabaseName() 
+    public int GetCurrentDatabaseName() 
     {
-        return _databaseMetaInfoService.GetDefaultDatabaseName();
+        return _updateService.GetDatabaseVersion();
+    }
+
+    [HttpGet]
+    public void DatabaseStepForward() 
+    {
+        _updateService.DatabaseStepForward();
+    }
+
+    [HttpGet]
+    public void DatabaseStepBackward() 
+    {
+        _updateService.DatabaseStepBackward();
+    }
+
+    [HttpGet]
+    public int GetDatabaseVersion() 
+    {
+        return _updateService.GetDatabaseVersion();
+    }
+
+    [HttpGet]
+    public string[] GetMigrationsDownList() 
+    {
+        return _updateService.GetMigrationsDownList().ToArray();
+    }
+
+    [HttpGet]
+    public string[] GetMigrationsUpList() 
+    {
+        return _updateService.GetMigrationsUpList().ToArray();
+    }
+
+    [HttpGet]
+    public string[] GetInitializeRecipeSteps() 
+    {
+        return _updateService.GetInitializeDatabaseRecipeSteps().ToArray();
     }
 }

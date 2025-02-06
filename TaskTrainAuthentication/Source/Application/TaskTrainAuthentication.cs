@@ -9,7 +9,8 @@ public class TaskTrainAuthentication : ITTApp
     {
         private IConfiguration Configuration { get; }
 
-        private readonly string _postgreConnectionString;
+        private readonly string _postgreSystemConnectionString;
+        private readonly string _postgreWorkingConnectionString;
 
         public Initialize(IHostEnvironment env)
         {
@@ -18,7 +19,8 @@ public class TaskTrainAuthentication : ITTApp
                 .AddJsonFile($"Config/appsettings.{env.EnvironmentName}.json")
                 .Build();
 
-            _postgreConnectionString = Configuration["Storage:PostgreSQL:Connectionstring"];
+            _postgreSystemConnectionString = Configuration["Storage:PostgreSQL:SystemConnectionString"];
+            _postgreWorkingConnectionString = Configuration["Storage:PostgreSQL:WorkingConnectionString"];
         }
 
         public void ConfigureServices(IServiceCollection services) 
@@ -27,7 +29,7 @@ public class TaskTrainAuthentication : ITTApp
             services.AddTokenGenerator();
             services.AddControllers();
             services.AddSwaggerGenAuth();
-            services.AddDatabaseMetaInfoService(_postgreConnectionString);
+            services.AddNpgsqlUpdater(_postgreSystemConnectionString, _postgreWorkingConnectionString);
         }
 
         public void Configure(IApplicationBuilder builder, IWebHostEnvironment env) 

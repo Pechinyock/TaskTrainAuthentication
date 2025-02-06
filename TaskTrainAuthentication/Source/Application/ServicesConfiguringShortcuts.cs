@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using TT.Core;
+using TT.Storage.Npgsql;
 
 namespace TT.Auth;
 
@@ -59,17 +60,21 @@ public static class ServicesConfiguringShortcuts
         return services;
     }
 
-    public static IServiceCollection AddDatabaseMetaInfoService(this IServiceCollection services, string connectionString) 
+    public static IServiceCollection AddNpgsqlUpdater(this IServiceCollection services, string systemConnectionString, string workingConnectionString) 
     {
-        if(String.IsNullOrEmpty(connectionString))
-            throw new ArgumentNullException(nameof(connectionString));
-
-        services.AddScoped<IDatabaseMetaInfoService, DatabaseMetaInfoService>();
-        services.Configure<DatabaseMetaInfoOptions>(options => 
+        var pgUpdater = new NpgsqlDatabaseUpdater(systemConnectionString, Path.Combine(AppContext.BaseDirectory, "Postgres"));
+        NpgsqlConnectionParameters.Parse(workingConnectionString, out var workingDbParams);
+        if (!pgUpdater.IsDatabaseInitialized(workingDbParams.Database))
         {
-            options.ConnectionString = connectionString;
-        });
+            pgUpdater.Initialize();
+        }
 
+        services.AddScoped<IUpdateService, UpdateService>();
+        services.Configure<UpdaterOptions>(options => 
+        {
+            options.DatabaseConnectionString = workingConnectionString;
+            options.MigrationsFolederPath = Path.Combine(AppContext.BaseDirectory, "Postgres");
+        });
         return services;
     }
 }

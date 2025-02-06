@@ -8,11 +8,22 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Npgsql" Version="9.0.2" />
-    <PackageReference Include="TT.Storage" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Postgres\Migrations\*.sql">
+    <None Update="Postgres\Migrations\Down\*.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <None Update="Postgres\Migrations\Up\*.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <None Update="Postgres\Migrations\Initialize\*.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
