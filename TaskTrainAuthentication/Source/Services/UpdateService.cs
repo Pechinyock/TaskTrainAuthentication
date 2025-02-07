@@ -42,9 +42,13 @@ public class UpdateService : IUpdateService
             , _updaterOptions.MigrationsFolederPath
         );
         dbUpdater.StepForward();
-    } 
+    }
 
-    public int GetDatabaseVersion() => throw new NotImplementedException();
+    public int GetDatabaseVersion() 
+    {
+        var pgDataProvider = new NpgsqlDataProvider(_updaterOptions.DatabaseConnectionString);
+        return pgDataProvider.GetDatabaseVersion();
+    }
 
     public IEnumerable<string> GetInitializeDatabaseRecipeSteps()
     {

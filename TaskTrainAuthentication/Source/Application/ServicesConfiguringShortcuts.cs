@@ -77,4 +77,14 @@ public static class ServicesConfiguringShortcuts
         });
         return services;
     }
+
+    public static IServiceCollection AddUserService(this IServiceCollection services, string repoConnectionString) 
+    {
+        services.AddTransient<IUserService, UserService>();
+        services.Configure<UserServiceOptions>(options => 
+        {
+            options.ConnectionString = repoConnectionString;
+        });
+        return services;
+    }
 }

@@ -30,6 +30,7 @@ public class TaskTrainAuthentication : ITTApp
             services.AddControllers();
             services.AddSwaggerGenAuth();
             services.AddNpgsqlUpdater(_postgreSystemConnectionString, _postgreWorkingConnectionString);
+            services.AddUserService(_postgreWorkingConnectionString);
         }
 
         public void Configure(IApplicationBuilder builder, IWebHostEnvironment env) 

@@ -20,12 +20,6 @@ public class ServiceUpdateController : ControllerBase
     }
 
     [HttpGet]
-    public int GetCurrentDatabaseName() 
-    {
-        return _updateService.GetDatabaseVersion();
-    }
-
-    [HttpGet]
     public void DatabaseStepForward() 
     {
         _updateService.DatabaseStepForward();
