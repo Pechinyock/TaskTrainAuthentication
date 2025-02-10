@@ -1,4 +1,5 @@
-﻿using TT.Core;
+﻿using Microsoft.AspNetCore.Identity;
+using TT.Core;
 
 namespace TT.Auth;
 
@@ -30,6 +31,7 @@ public class TaskTrainAuthentication : ITTApp
             services.AddControllers();
             services.AddSwaggerGenAuth();
             services.AddNpgsqlUpdater(_postgreSystemConnectionString, _postgreWorkingConnectionString);
+            services.AddPasswordHasher();
             services.AddUserService(_postgreWorkingConnectionString);
         }
 

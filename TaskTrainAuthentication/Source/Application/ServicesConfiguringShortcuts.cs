@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using TT.Core;
+using TT.Auth.Entities;
 using TT.Storage.Npgsql;
 
 namespace TT.Auth;
@@ -85,6 +87,12 @@ public static class ServicesConfiguringShortcuts
         {
             options.ConnectionString = repoConnectionString;
         });
+        return services;
+    }
+
+    public static IServiceCollection AddPasswordHasher(this IServiceCollection services) 
+    {
+        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         return services;
     }
 }
