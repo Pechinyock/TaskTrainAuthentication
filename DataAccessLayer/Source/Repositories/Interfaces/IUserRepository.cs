@@ -6,4 +6,5 @@ public interface IUserRepository
 {
     User AddUser(User newUser);
     User GetUser(string login);
+    bool IsUserExists(string login);
 }

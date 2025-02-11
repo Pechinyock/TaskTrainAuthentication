@@ -11,19 +11,19 @@ public sealed class UserRepository : IUserRepository
 
     public UserRepository(string connectionString)
     {
-        if(String.IsNullOrEmpty(connectionString))
+        if (String.IsNullOrEmpty(connectionString))
             throw new ArgumentNullException(nameof(connectionString));
 
         _connectionString = connectionString;
     }
 
-    public User AddUser(User newUser) 
+    public User AddUser(User newUser)
     {
         Guid id = newUser.Id;
         string login = newUser.Login;
         string passwordHash = newUser.PasswordHash;
 
-        using (var connection = new NpgsqlConnection(_connectionString)) 
+        using (var connection = new NpgsqlConnection(_connectionString))
         {
             connection.Open();
             var cmd = $"insert into {_tableName} (id, login, password_hash) values(@id, @login, @passwordHash)";
@@ -38,18 +38,18 @@ public sealed class UserRepository : IUserRepository
         return newUser;
     }
 
-    public User GetUser(string login) 
+    public User GetUser(string login)
     {
         if (String.IsNullOrEmpty(login))
             return null;
 
-        using (var connection = new NpgsqlConnection(_connectionString)) 
+        using (var connection = new NpgsqlConnection(_connectionString))
         {
             connection.Open();
             var cmd = $"select * from {_tableName} where login = @login";
             var dbUser = connection.QueryFirstOrDefault(cmd, new { login = login });
 
-            if(dbUser is null)
+            if (dbUser is null)
                 return null;
 
             var result = new User()
@@ -60,5 +60,14 @@ public sealed class UserRepository : IUserRepository
             };
             return result;
         }
+    }
+
+    public bool IsUserExists(string login) 
+    {
+        if(String.IsNullOrEmpty(login))
+            return false;
+
+        var user = GetUser(login);
+        return user != null;
     }
 }

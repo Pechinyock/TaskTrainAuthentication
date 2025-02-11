@@ -26,6 +26,11 @@ public class UserService : IUserService
 
     public Result<User, CreateFailedReasonEnum> CreateUser(UserCreateModel newUser)
     {
+        var repo = new UserRepository(_userServiceOptions.ConnectionString);
+
+        if (repo.IsUserExists(newUser.Login))
+            return CreateFailedReasonEnum.AlreadyExists;
+
         var user = new User()
         {
             Id = Guid.NewGuid(),
@@ -33,8 +38,6 @@ public class UserService : IUserService
         };
 
         user.PasswordHash = _passwordHasher.HashPassword(user, newUser.Password);
-
-        var repo = new UserRepository(_userServiceOptions.ConnectionString);
 
         return repo.AddUser(user);
     }

@@ -11,7 +11,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="TT.Core" Version="1.0.8" />
 		<PackageReference Include="TT.Storage" Version="1.0.2" />
-		<PackageReference Include="TT.Storage.Npgsql" Version="1.0.7" />
+		<PackageReference Include="TT.Storage.Npgsql" Version="1.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using TT.Auth.Entities;
 
 namespace TT.Auth;
 
@@ -29,15 +28,31 @@ public class UserController : ControllerBase
     public ActionResult CreateUser([Required, FromBody] UserCreateModel model)
     {
         /* validate incoming model */
-        _userService.CreateUser(model);
-        return Ok();
+        
+        var dbOperationResult = _userService.CreateUser(model);
+        var result = dbOperationResult.Match<ActionResult>(success: (user) => 
+        {
+            return Ok();
+        }, 
+        failure: (reason) => 
+        {
+            switch (reason) 
+            {
+                case CreateFailedReasonEnum.AlreadyExists:
+                    return Conflict($"User with login: {model.Login} already exists");
+                default:
+                    return BadRequest();
+            }
+        });
+
+        return result;
     }
 
     [HttpPost]
     public ActionResult<TokenModel> Login([Required, FromBody] UserLoginModel creds)
     {
         var userOrError = _userService.Login(creds);
-        var resutl = userOrError.Match<ActionResult<TokenModel>>(success: (user) =>
+        var result = userOrError.Match<ActionResult<TokenModel>>(success: (user) =>
         {
             var token = _tokenService.GenerateAccessToken(user.Login);
             return new TokenModel() { AccessToken = token };
@@ -53,6 +68,6 @@ public class UserController : ControllerBase
             }
             return BadRequest();
         });
-        return resutl;
+        return result;
     }
 }
