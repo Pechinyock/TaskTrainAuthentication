@@ -2,5 +2,6 @@
 (
    id uuid primary key,
    login varchar(10) unique,
-   password_hash varchar(100)
+   password_hash varchar(100),
+   access_layer smallint not null default 0
 );

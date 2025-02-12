@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace TT.Auth;
 
@@ -54,7 +56,11 @@ public class UserController : ControllerBase
         var userOrError = _userService.Login(creds);
         var result = userOrError.Match<ActionResult<TokenModel>>(success: (user) =>
         {
-            var token = _tokenService.GenerateAccessToken(user.Login);
+            var additionalClaims = new List<Claim>()
+            {
+                new Claim("AccessLayer", user.AccessLayer.ToString()),
+            };
+            var token = _tokenService.GenerateAccessToken(user.Login, additionalClaims);
             return new TokenModel() { AccessToken = token };
         },
         failure: (reason) => 

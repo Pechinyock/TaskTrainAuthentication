@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Npgsql;
+using TT.Core;
 using TT.Auth.Entities;
 
 namespace TT.Auth.Data;
@@ -57,6 +58,7 @@ public sealed class UserRepository : IUserRepository
                 Id = dbUser.id,
                 Login = dbUser.login,
                 PasswordHash = dbUser.password_hash,
+                AccessLayer = (UserAccesLayerEnum)dbUser.access_layer,
             };
             return result;
         }
