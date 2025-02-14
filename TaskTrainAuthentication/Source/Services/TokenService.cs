@@ -27,6 +27,7 @@ public class TokenService : ITokenService
             , signingCredentials: signedCreds
         );
         var accessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
+
         return accessToken;
     }
 }

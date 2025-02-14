@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using TT.Auth.Constants;
+using TT.Core;
 
 namespace TT.Auth;
 
@@ -27,10 +30,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult CreateUser([Required, FromBody] UserCreateModel model)
+    public ActionResult Create([Required, FromBody] UserCreateModel model)
     {
         /* validate incoming model */
-        
+        /* password policy */
+
         var dbOperationResult = _userService.CreateUser(model);
         var result = dbOperationResult.Match<ActionResult>(success: (user) => 
         {
@@ -75,5 +79,20 @@ public class UserController : ControllerBase
             return BadRequest();
         });
         return result;
+    }
+
+    [HttpPost]
+    [Authorize(Policy = Policy.AccessLayer.Admin)]
+    public ActionResult SetAccessLayer([Required, FromBody] UserUpdateAccessLayerModel model) 
+    {
+        _userService.UpdateUserAccessLayer(model);
+        return Ok();
+    }
+
+    [HttpGet]
+    [Authorize(Policy = Policy.AccessLayer.Admin)]
+    public ActionResult All() 
+    {
+        return Ok();
     }
 }

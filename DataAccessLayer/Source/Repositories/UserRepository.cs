@@ -72,4 +72,15 @@ public sealed class UserRepository : IUserRepository
         var user = GetUser(login);
         return user != null;
     }
+
+    public User UpdateUser(User user)
+    {
+        using (var connection = new NpgsqlConnection(_connectionString)) 
+        {
+            connection.Open();
+            var cmd = $"update {_tableName} set login = @Login, access_layer = @AccessLayer where id = @Id";
+            var affectedRows = connection.Execute(cmd, user);
+            return user;
+        }
+    }
 }

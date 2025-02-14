@@ -7,9 +7,9 @@ using TT.Core;
 namespace TT.Auth;
 
 #region option class
-public class UserServiceOptions 
+public class UserServiceOptions
 {
-    public string ConnectionString { get; set;}
+    public string ConnectionString { get; set; }
 }
 #endregion
 
@@ -42,7 +42,7 @@ public class UserService : IUserService
         return repo.AddUser(user);
     }
 
-    public Result<User, LoginFailedReasonEnum> Login(UserLoginModel creds) 
+    public Result<User, LoginFailedReasonEnum> Login(UserLoginModel creds)
     {
         var repo = new UserRepository(_userServiceOptions.ConnectionString);
         var user = repo.GetUser(creds.Login);
@@ -52,7 +52,7 @@ public class UserService : IUserService
 
         var passwordVerifyResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, creds.Password);
 
-        switch (passwordVerifyResult) 
+        switch (passwordVerifyResult)
         {
             case PasswordVerificationResult.SuccessRehashNeeded:
             case PasswordVerificationResult.Success:
@@ -61,6 +61,22 @@ public class UserService : IUserService
             case PasswordVerificationResult.Failed:
                 return LoginFailedReasonEnum.WrongPassword;
         }
+
+        return user;
+    }
+
+    public Result<User, UpdateAccessLayerFailedReasonEnum> UpdateUserAccessLayer(UserUpdateAccessLayerModel value)
+    {
+        var repo = new UserRepository(_userServiceOptions.ConnectionString);
+        var user = repo.GetUser(value.Login);
+        if(user is null)
+            return UpdateAccessLayerFailedReasonEnum.UserNotFound;
+
+        if (user.AccessLayer == value.NewLayerValue)
+            return UpdateAccessLayerFailedReasonEnum.AlreadyHadSame;
+
+        user.AccessLayer = value.NewLayerValue;
+        repo.UpdateUser(user);
 
         return user;
     }

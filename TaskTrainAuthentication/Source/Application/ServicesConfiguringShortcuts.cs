@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using TT.Core;
 using TT.Auth.Entities;
 using TT.Storage.Npgsql;
+using TT.Auth.Constants;
 
 namespace TT.Auth;
 
@@ -45,13 +46,13 @@ public static class ServicesConfiguringShortcuts
 
     public static IServiceCollection AddJwtAuth(this IServiceCollection services) 
     {
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options => 
-            {
-                options.RequireHttpsMetadata = true;
-                var authOptions = AuthenticationDefaults.GetDefaultOptions();
-                options.TokenValidationParameters = AuthenticationDefaults.GetValidationParameters(authOptions);
-            });
+        var auth = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+        auth.AddJwtBearer(options => 
+        {
+            options.RequireHttpsMetadata = true;
+            var authOptions = AuthenticationDefaults.GetDefaultOptions();
+            options.TokenValidationParameters = AuthenticationDefaults.GetValidationParameters(authOptions);
+        });
 
         return services;
     }
@@ -93,6 +94,17 @@ public static class ServicesConfiguringShortcuts
     public static IServiceCollection AddPasswordHasher(this IServiceCollection services) 
     {
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        return services;
+    }
+
+    public static IServiceCollection AddAuthorizationWithPolicies(this IServiceCollection services) 
+    {
+        services.AddAuthorization(options => 
+        {
+            options.AddPolicy(Policy.AccessLayer.Admin
+                , policy => policy.Requirements.Add(new AdminAccessLayer())
+            );
+        });
         return services;
     }
 }

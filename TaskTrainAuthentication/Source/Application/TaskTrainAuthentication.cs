@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using TT.Core;
+﻿using TT.Core;
 
 namespace TT.Auth;
 
@@ -27,6 +26,7 @@ public class TaskTrainAuthentication : ITTApp
         public void ConfigureServices(IServiceCollection services) 
         {
             services.AddJwtAuth();
+            services.AddAuthorizationWithPolicies();
             services.AddTokenGenerator();
             services.AddControllers();
             services.AddSwaggerGenAuth();
