@@ -33,6 +33,7 @@ public class TaskTrainAuthentication : ITTApp
             services.AddNpgsqlUpdater(_postgreSystemConnectionString, _postgreWorkingConnectionString);
             services.AddPasswordHasher();
             services.AddUserService(_postgreWorkingConnectionString);
+            services.AddPublisherService();
         }
 
         public void Configure(IApplicationBuilder builder, IWebHostEnvironment env) 

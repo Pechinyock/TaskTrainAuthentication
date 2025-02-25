@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using RabbitMQ.Client;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Text;
 using TT.Auth.Constants;
 using TT.Core;
 
@@ -22,11 +24,13 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly ITokenService _tokenService;
+    private readonly IMessagePublisher _publisher;
 
-    public UserController(IUserService userSerivce, ITokenService tokenService)
+    public UserController(IUserService userSerivce, ITokenService tokenService, IMessagePublisher publisher)
     {
         _userService = userSerivce;
         _tokenService = tokenService;
+        _publisher = publisher;
     }
 
     [HttpPost]
@@ -58,6 +62,7 @@ public class UserController : ControllerBase
     public ActionResult<TokenModel> Login([Required, FromBody] UserLoginModel creds)
     {
         var userOrError = _userService.Login(creds);
+
         var result = userOrError.Match<ActionResult<TokenModel>>(success: (user) =>
         {
             var additionalClaims = new List<Claim>()
@@ -93,6 +98,17 @@ public class UserController : ControllerBase
     [Authorize(Policy = Policy.AccessLayer.Admin)]
     public ActionResult All() 
     {
+        return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> PublishMessageRabbitMQ() 
+    {
+        var msg = "first published message";
+        var body = Encoding.UTF8.GetBytes(msg);
+
+        await _publisher.Send("Log", ExchangeTypeEnum.Fanout, String.Empty, body);
+
         return Ok();
     }
 }
