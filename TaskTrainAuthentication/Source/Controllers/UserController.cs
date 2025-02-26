@@ -107,7 +107,7 @@ public class UserController : ControllerBase
         var msg = "first published message";
         var body = Encoding.UTF8.GetBytes(msg);
 
-        await _publisher.Send("Log", ExchangeTypeEnum.Fanout, String.Empty, body);
+        await _publisher.Send(PublishRegestry.Logger, body);
 
         return Ok();
     }
