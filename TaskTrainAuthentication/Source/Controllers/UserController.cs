@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using RabbitMQ.Client;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
@@ -40,13 +40,13 @@ public class UserController : ControllerBase
         /* password policy */
 
         var dbOperationResult = _userService.CreateUser(model);
-        var result = dbOperationResult.Match<ActionResult>(success: (user) => 
+        var result = dbOperationResult.Match<ActionResult>(success: (user) =>
         {
             return Ok();
-        }, 
-        failure: (reason) => 
+        },
+        failure: (reason) =>
         {
-            switch (reason) 
+            switch (reason)
             {
                 case CreateFailedReasonEnum.AlreadyExists:
                     return Conflict($"User with login: {model.Login} already exists");
@@ -72,9 +72,9 @@ public class UserController : ControllerBase
             var token = _tokenService.GenerateAccessToken(user.Login, additionalClaims);
             return new TokenModel() { AccessToken = token };
         },
-        failure: (reason) => 
+        failure: (reason) =>
         {
-            switch (reason) 
+            switch (reason)
             {
                 case LoginFailedReasonEnum.UserNotFound:
                     return NotFound($"user with login: {creds.Login} not found");
@@ -88,7 +88,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Authorize(Policy = Policy.AccessLayer.Admin)]
-    public ActionResult SetAccessLayer([Required, FromBody] UserUpdateAccessLayerModel model) 
+    public ActionResult SetAccessLayer([Required, FromBody] UserUpdateAccessLayerModel model)
     {
         _userService.UpdateUserAccessLayer(model);
         return Ok();
@@ -96,17 +96,22 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Authorize(Policy = Policy.AccessLayer.Admin)]
-    public ActionResult All() 
+    public ActionResult All()
     {
         return Ok();
     }
 
     [HttpGet]
-    public async Task<IActionResult> PublishMessageRabbitMQ() 
+    public async Task<IActionResult> PublishMessageRabbitMQ()
     {
-        var msg = "first published message";
-        var body = Encoding.UTF8.GetBytes(msg);
+        var firstLogMessage = new LogMessage()
+        {
+            Level = LogMessage.Types.LevelEnum.Info,
+            Description = "this is not a joke! Message was send as binary protobuf format!",
+            TimeStamp = Timestamp.FromDateTime(DateTime.UtcNow)
+        };
 
+        var body = firstLogMessage.ToByteArray();
         await _publisher.Send(PublishRegestry.Logger, body);
 
         return Ok();

@@ -8,7 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="RabbitMQ.Client" Version="7.1.0" />
-		<PackageReference Include="TT.Core" Version="1.0.14" />
+		<PackageReference Include="TT.Core" Version="1.0.15" />
 		<PackageReference Include="TT.Storage" Version="1.0.3" />
 		<PackageReference Include="TT.Storage.Npgsql" Version="1.0.10" />
 	</ItemGroup>
